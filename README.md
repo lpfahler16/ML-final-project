@@ -1,6 +1,7 @@
 # NFL Play Predictor
 
 ## Abstract
+We are creating ML models from NFL play data that will help us to predict whether or not teams will go for it on 4th down, and whether or not they will succeed if they do go for it.
 
 ## Introduction
 ### What is the problem?
@@ -21,3 +22,18 @@ The key components of our approach is cleaning the dataset to get only the plays
 ## Setup
 ### Dataset
 The dataset is from NFLsavant.com which provides data on every NFL play from every season for the past decade. The columns are team name, yard line, game date, seconds remaining, down, yard to go, score differential, and the targets: converted fourth down, attempted fourth down, field goal, and punt.  
+
+### Experimental Setup
+
+### Problem Setup
+
+## Results
+### Main Results
+
+### Supplementary Results
+
+## Discussion
+
+## Conclusion
+
+## References
