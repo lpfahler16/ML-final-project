@@ -24,11 +24,13 @@ The key components of our approach is cleaning the dataset to get only the plays
 The dataset is from NFLsavant.com which provides data on every NFL play from every season for the past decade. The columns are team name, yard line, game date, seconds remaining, down, yard to go, score differential, and the targets: converted fourth down, attempted fourth down, field goal, and punt.  
 
 ### Experimental Setup
+We ran 3 models for this experiment. We used Random Forests and KNN with and without cross validation as well as a neural network. For each model we tested 2 different sets of classes. The first was whether a team punted, kicked a field goal, or went for it on fourth down. The second was whether a team punted, kicked a field goal, went for it and made it, or went for it and failed on fourth down. We cross validated the random forests on max features, max depth, number of estimators, and min sample split. KNN was cross validated on number of neighbors.
 
 ### Problem Setup
 
 ## Results
 ### Main Results
+We found that we could strongly predict whether I a team would punt, kick a field goal, or go for it with about 90% accuracy, but it was much more inconsistent to predict whether or not the 4th down would be converted. The best model in predicting what will happen on 4th down was random forests with an attempt prediction accuracy of about 90%.
 
 ### Supplementary Results
 
