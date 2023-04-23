@@ -56,6 +56,10 @@ class FourthDownPrediction:
         self.scaler = load(os.path.join(current_dir, './models/scaler.joblib'))
         self.conversion_by_nn = conversion_by_nn
 
+        self.conversion_model = models.ConversionNNClassifier()
+        self.conversion_model.load_state_dict(torch.load(os.path.join(
+            current_dir, './models/nn/conversion.joblib')))
+
     def predict_play(self, values, include_conversion=False, scale=False):
         if scale:
             values = self.scaler.transform(values)
@@ -80,4 +84,9 @@ class FourthDownPrediction:
             return [mapping[n.item()] for n in preds]
 
     def predict_conversion(self, values, percentage=False, scale=False):
-        pass
+        if scale:
+            values = self.scaler.transform(values)
+
+        output = self.conversion_model(torch.tensor(values).float())
+        preds = output.argmax(dim=1, keepdim=True)
+        return preds
