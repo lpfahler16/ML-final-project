@@ -98,7 +98,8 @@ class FourthDownPrediction:
         output = self.conversion_model(torch.tensor(values).float())
 
         if percentage:
-            return output
+            probs = torch.nn.functional.softmax(output, dim=1)
+            return [float(prob[0]) for prob in probs]
 
         preds = output.argmax(dim=1, keepdim=True)
         mapping = {
