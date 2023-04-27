@@ -12,11 +12,8 @@ spec.loader.exec_module(models)
 
 class FourthDownPrediction:
 
-    def __init__(self, play_model='default', conversion_by_nn=False):
+    def __init__(self, play_model='RandomForestCV', conversion_by_nn=False):
         current_dir = os.path.dirname(os.path.abspath(__file__))
-
-        if play_model == 'default':
-            play_model = 'RandomForestCV'
 
         if play_model == 'RandomForest':
             self.attempt_model = load(os.path.join(
@@ -64,10 +61,12 @@ class FourthDownPrediction:
         if scale:
             values = self.scaler.transform(values)
 
-        model = self.convert_model if include_conversion else self.attempt_model
+        results = []
+
+        model = self.convert_model if include_conversion and not self.conversion_by_nn else self.attempt_model
 
         if self.sklearn:
-            return model.predict(values)
+            results = model.predict(values)
         else:
             output = model(torch.tensor(values).float())
             preds = output.argmax(dim=1, keepdim=True)
@@ -76,17 +75,34 @@ class FourthDownPrediction:
                 1: 'FAILED',
                 2: 'FIELD_GOAL',
                 3: 'PUNT'
-            } if include_conversion else {
+            } if include_conversion and not self.conversion_by_nn else {
                 0: 'ATTEMPTED',
                 1: 'FIELD_GOAL',
                 2: 'PUNT'
             }
-            return [mapping[n.item()] for n in preds]
+            results = [mapping[n.item()] for n in preds]
+            if include_conversion and self.conversion_by_nn:
+                print(results)
+
+        if include_conversion and self.conversion_by_nn:
+            for i, result in enumerate(results):
+                if result == 'ATTEMPTED':
+                    results[i] = self.predict_conversion([values[i]])[0]
+
+        return results
 
     def predict_conversion(self, values, percentage=False, scale=False):
         if scale:
             values = self.scaler.transform(values)
 
         output = self.conversion_model(torch.tensor(values).float())
+
+        if percentage:
+            return output
+
         preds = output.argmax(dim=1, keepdim=True)
-        return preds
+        mapping = {
+            0: 'CONVERTED',
+            1: 'FAILED'
+        }
+        return [mapping[n.item()] for n in preds]
